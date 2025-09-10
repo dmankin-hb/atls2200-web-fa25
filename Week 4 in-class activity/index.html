@@ -1,98 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style> 
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Week 4 – Design System (Simple)</title>
 
-        html {
-            font-family: "baudot", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-        }
+  <!-- Fonts kept simple: Headings use Poiret One, Body uses Work Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
 
-        .flex {
-            display: flex;
-            flex-direction: row;
-        }
+  <style>
+    /* BASIC PAGE STYLES */
+    body { font-family: "Work Sans", Arial, sans-serif; margin: 16px; line-height: 1.6; }
+    h1, h2, h3 { font-family: "Poiret One", Arial, sans-serif; margin: 16px 0 8px; }
+    p { margin: 8px 0; }
+    .small-text { font-size: 14px; }
 
+    /* COLOR BOXES (from your original) */
+    .color-box { height: 100px; width: 100px; display: flex; align-items: flex-end; justify-content: center; color: #1B1B1B; font-size: 12px; padding: 4px; box-sizing: border-box; margin-right: 8px; border: 1px solid #e6ebe0; }
+    #box1 { background-color: #ED6A5A; color: white; }
+    #box2 { background-color: #F4F1BB; }
+    #box3 { background-color: #9BC1BC; }
+    #box4 { background-color: #5CA4A9; color: white; }
+    #box5 { background-color: #E6EBE0; }
 
-        .color-box {
-            height: 100px;
-            width: 100px;
-        }
+    /* LINKS */
+    a { text-decoration: none; color: #ED6A5A; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    a:visited { color: #CC7178; }
 
-        #box1 {
-            background-color: #ED6A5A;
-        }
+    /* SIMPLE BUTTONS */
+    .btn { background: #2F6F74; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .btn:hover { filter: brightness(1.05); }
+    .btn:focus { outline: 3px solid #ED6A5A; outline-offset: 2px; }
+    .btn-accent { background: #ED6A5A; color: #ffffff; }
+    .btn-ghost { background: transparent; color: #2F6F74; border: 2px solid #2F6F74; }
 
-        #box2 {
-            background-color: #F4F1BB;
-        }
+    /* INPUT */
+    .input { padding: 10px 12px; border: 1px solid #e6ebe0; border-radius: 6px; }
+    .input:focus { outline: 3px solid #ED6A5A; outline-offset: 2px; }
 
-        #box3 {
-            background-color: #9BC1BC;
-        }
+    /* SPACING DEMO (simple bars) */
+    .bar { height: 10px; background: #5CA4A9; border-radius: 999px; margin: 8px 0; }
+    .w8 { width: 8px; }
+    .w16 { width: 16px; }
+    .w24 { width: 24px; }
+    .w32 { width: 32px; }
+    .w48 { width: 48px; }
+    .space-item { margin-bottom: 12px; display: flex; flex-direction: column; align-items: flex-start; }
 
-        #box4 {
-            background-color: #5CA4A9;
-        }
-
-        #box5 {
-            background-color: #E6EBE0;
-        }
-
-        p {
-            font-size: 16px;
-        }
-
-        .small-text {
-            font-size: 12px;
-        }
-
-        h3 {
-            font-size: 20px;
-        }
-
-        h2 {
-            font-size: 24px;
-        }
-
-        h1 {
-            font-size: 28px;
-        }
-
-        a {
-            text-decoration: none;
-            color: #89023E;
-        }
-
-        a:hover {
-            text-decoration: underline;
-            color: #CC7178;
-        }
-
-        a:visited {
-            color: #C7D8B7;
-        }
-    
-    </style>
+    /* TABLE (for simple contrast documentation) */
+    table { border-collapse: collapse; width: 100%; max-width: 560px; }
+    th, td { border: 1px solid #e6ebe0; padding: 6px 8px; text-align: left; font-size: 14px; }
+  </style>
 </head>
 <body>
-    <div class="color-box" id="box1"> </div>
-    <div class="color-box" id="box2"> </div>
-    <div class="color-box" id="box3"> </div>
-    <div class="color-box" id="box4"> </div>
-    <div class="color-box" id="box5"> </div>
+  <!-- TYPOGRAPHY EXAMPLES -->
+  <h1>This is a heading 1</h1>
+  <h2>This is a heading 2</h2>
+  <h3>This is a heading 3</h3>
+  <p>This is paragraph text.</p>
+  <p class="small-text">This is small paragraph text.</p>
+  <p><a href="#components">This is a link (hover + visited)</a></p>
 
-    <h1>This is a heading 1</h1>
-    <h2>This is a heading 2</h2>
-    <h3>This is a heading 3</h3>
+  <!-- COLOR PALETTE WITH HEX CODES -->
+  <h2>Color Palette</h2>
+  <div>
+    <div class="color-box" id="box1">#ED6A5A – 4.7:1</div>
+    <div class="color-box" id="box2">#F4F1BB – 1.5:1</div>
+    <div class="color-box" id="box3">#9BC1BC – 2.5:1</div>
+    <div class="color-box" id="box4">#5CA4A9 – 6:1</div>
+    <div class="color-box" id="box5">#E6EBE0 – 1.2:1</div>
+  </div>
+  <p class="small-text">Hex codes: #ED6A5A, #F4F1BB, #9BC1BC, #5CA4A9, #E6EBE0</p>
 
-    <p>This is paragraph text.</p>
-    <p class="small-text">This is small paragraph text.</p>
+  <!-- SPACING SYSTEM (8,16,24,32,48) -->
+  <h2>Spacing System</h2>
+  <p class="small-text">Base 8px: 8, 16, 24, 32, 48</p>
+  <div class="space-item">
+    <div class="bar w8"></div>
+    <span class="small-text">8px</span>
+  </div>
+  <div class="space-item">
+    <div class="bar w16"></div>
+    <span class="small-text">16px</span>
+  </div>
+  <div class="space-item">
+    <div class="bar w24"></div>
+    <span class="small-text">24px</span>
+  </div>
+  <div class="space-item">
+    <div class="bar w32"></div>
+    <span class="small-text">32px</span>
+  </div>
+  <div class="space-item">
+    <div class="bar w48"></div>
+    <span class="small-text">48px</span>
+  </div>
 
+  <!-- SIMPLE COMPONENTS -->
+  <h2 id="components">Components</h2>
+  <h3>Buttons</h3>
+  <p>
+    <button class="btn" type="button">Primary</button>
+    <button class="btn btn-accent" type="button">Accent</button>
+    <button class="btn btn-ghost" type="button">Ghost</button>
+  </p>
 
+  <h3>Input</h3>
+  <p>
+    <label class="small-text" for="demo-input">Label</label><br>
+    <input id="demo-input" class="input" type="text" placeholder="Type here…" />
+  </p>
 </body>
 </html>
