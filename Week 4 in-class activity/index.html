@@ -3,19 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Week 4 – Design System (Simple)</title>
+  <title>Week 4 In-Class Activity: Design System Creation</title>
 
-  <!-- Fonts kept simple: Headings use Poiret One, Body uses Work Sans -->
   <link href="https://fonts.googleapis.com/css2?family=Poiret+One&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* BASIC PAGE STYLES */
     body { font-family: "Work Sans", Arial, sans-serif; margin: 16px; line-height: 1.6; }
     h1, h2, h3 { font-family: "Poiret One", Arial, sans-serif; margin: 16px 0 8px; }
     p { margin: 8px 0; }
     .small-text { font-size: 14px; }
 
-    /* COLOR BOXES (from your original) */
     .color-box { height: 100px; width: 100px; display: flex; align-items: flex-end; justify-content: center; color: #1B1B1B; font-size: 12px; padding: 4px; box-sizing: border-box; margin-right: 8px; border: 1px solid #e6ebe0; }
     #box1 { background-color: #ED6A5A; color: white; }
     #box2 { background-color: #F4F1BB; }
@@ -23,23 +20,19 @@
     #box4 { background-color: #5CA4A9; color: white; }
     #box5 { background-color: #E6EBE0; }
 
-    /* LINKS */
     a { text-decoration: none; color: #ED6A5A; font-weight: 600; }
     a:hover { text-decoration: underline; }
     a:visited { color: #CC7178; }
 
-    /* SIMPLE BUTTONS */
     .btn { background: #2F6F74; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
     .btn:hover { filter: brightness(1.05); }
     .btn:focus { outline: 3px solid #ED6A5A; outline-offset: 2px; }
     .btn-accent { background: #ED6A5A; color: #ffffff; }
     .btn-ghost { background: transparent; color: #2F6F74; border: 2px solid #2F6F74; }
 
-    /* INPUT */
     .input { padding: 10px 12px; border: 1px solid #e6ebe0; border-radius: 6px; }
     .input:focus { outline: 3px solid #ED6A5A; outline-offset: 2px; }
 
-    /* SPACING DEMO (simple bars) */
     .bar { height: 10px; background: #5CA4A9; border-radius: 999px; margin: 8px 0; }
     .w8 { width: 8px; }
     .w16 { width: 16px; }
@@ -48,13 +41,11 @@
     .w48 { width: 48px; }
     .space-item { margin-bottom: 12px; display: flex; flex-direction: column; align-items: flex-start; }
 
-    /* TABLE (for simple contrast documentation) */
     table { border-collapse: collapse; width: 100%; max-width: 560px; }
     th, td { border: 1px solid #e6ebe0; padding: 6px 8px; text-align: left; font-size: 14px; }
   </style>
 </head>
 <body>
-  <!-- TYPOGRAPHY EXAMPLES -->
   <h1>This is a heading 1</h1>
   <h2>This is a heading 2</h2>
   <h3>This is a heading 3</h3>
@@ -62,7 +53,6 @@
   <p class="small-text">This is small paragraph text.</p>
   <p><a href="#components">This is a link (hover + visited)</a></p>
 
-  <!-- COLOR PALETTE WITH HEX CODES -->
   <h2>Color Palette</h2>
   <div>
     <div class="color-box" id="box1">#ED6A5A – 4.7:1</div>
@@ -73,7 +63,6 @@
   </div>
   <p class="small-text">Hex codes: #ED6A5A, #F4F1BB, #9BC1BC, #5CA4A9, #E6EBE0</p>
 
-  <!-- SPACING SYSTEM (8,16,24,32,48) -->
   <h2>Spacing System</h2>
   <p class="small-text">Base 8px: 8, 16, 24, 32, 48</p>
   <div class="space-item">
@@ -97,7 +86,6 @@
     <span class="small-text">48px</span>
   </div>
 
-  <!-- SIMPLE COMPONENTS -->
   <h2 id="components">Components</h2>
   <h3>Buttons</h3>
   <p>
