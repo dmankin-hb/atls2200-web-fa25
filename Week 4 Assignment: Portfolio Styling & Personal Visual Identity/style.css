@@ -1,3 +1,63 @@
-body{
-    
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: white;
+  color: black;
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 2em;
+  color: darkblue;
+}
+h2 {
+  font-size: 1.5em;
+  color: darkslategray;
+}
+p {
+  font-size: 1em;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+header {
+  background-color: lightgray;
+  padding: 10px;
+}
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 10px;
+}
+nav a {
+  padding: 5px 10px;
+  background-color: white;
+  border: 1px solid gray;
+  border-radius: 4px;
+}
+nav a[aria-current="page"] {
+  background-color: lightblue;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+footer {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: lightgray;
+  text-align: center;
+  font-size: 0.9em;
 }
