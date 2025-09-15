@@ -1,34 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Work+Sans:wght@400;600;700&display=swap');
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: white;
-  color: black;
+  font-family: 'Work Sans', Arial, sans-serif;
+  background-color: #E6EBE0; 
+  color: #1B1B1B;
   line-height: 1.5;
 }
 
-h1 {
-  font-size: 2em;
-  color: darkblue;
+
+h1, h2, h3 {
+  font-family: 'Poiret One', cursive;
+  margin-top: 0;
 }
-h2 {
-  font-size: 1.5em;
-  color: darkslategray;
-}
-p {
-  font-size: 1em;
-}
+
+h1 { font-size: 2em; color: #ED6A5A; }  
+h2 { font-size: 1.5em; color: #5CA4A9; } 
+h3 { font-size: 1.2em; color: #2F4F4F; }
+
+p { font-size: 1em; }
 
 a {
-  color: blue;
+  color: #2F4F4F; 
   text-decoration: none;
 }
-a:hover {
-  text-decoration: underline;
-}
+a:hover { text-decoration: underline; }
+a:visited { color: #9BC1BC; }
+a:active { color: #ED6A5A; }
 
 header {
-  background-color: lightgray;
+  background-color: #F4F1BB;
   padding: 10px;
 }
 nav ul {
@@ -45,19 +46,43 @@ nav a {
   border-radius: 4px;
 }
 nav a[aria-current="page"] {
-  background-color: lightblue;
+  background-color: #5CA4A9;
+  color: white;
 }
 
 .container {
   max-width: 800px;
   margin: 20px auto;
   padding: 10px;
+  background-color: white;
+  border-radius: 6px;
+}
+
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+.button-primary {
+  background-color: #ED6A5A;
+  color: white;
+}
+.button-secondary {
+  background-color: #5CA4A9;
+  color: white;
+}
+.button-light {
+  background-color: #F4F1BB;
+  color: #1B1B1B;
 }
 
 footer {
   margin-top: 20px;
   padding: 10px;
-  background-color: lightgray;
+  background-color: #F4F1BB;
   text-align: center;
   font-size: 0.9em;
 }
