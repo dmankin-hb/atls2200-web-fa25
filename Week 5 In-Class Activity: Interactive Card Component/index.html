@@ -17,7 +17,7 @@
             border-radius: 12px;
             padding: 1rem 1rem 0.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            font-family: system-ui, Arial, sans-serif;
         }
 
         .card-header {
@@ -95,10 +95,8 @@
         expandBtn.setAttribute('aria-label', willOpen ? 'Collapse card' : 'Expand card');
       }
 
-      // Click toggles
       expandBtn.addEventListener('click', toggleDetails);
 
-      // Support Enter/Space explicitly (buttons already do this in most browsers)
       expandBtn.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
