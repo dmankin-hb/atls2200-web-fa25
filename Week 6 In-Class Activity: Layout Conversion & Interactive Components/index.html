@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Unique Grid Photo Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="gallery-container">
+    <header class="gallery-header">
+      <span class="ribbon"></span>
+      <h1>Photo Gallery</h1>
+    </header>
+    <nav class="gallery-nav" aria-label="Gallery filters">
+      <button data-filter="all" class="active">All</button>
+      <button data-filter="green">Green Boxes</button>
+      <button data-filter="blue">Blue Boxes</button>
+      <span id="count" class="count" aria-live="polite"></span>
+    </nav>
+    <main class="gallery-grid">
+      <div class="photo-card green"></div>
+      <div class="photo-card blue"></div>
+      <div class="photo-card green"></div>
+      <div class="photo-card featured green"></div>
+      <div class="photo-card blue"></div>
+      <div class="photo-card green"></div>
+      <div class="photo-card blue"></div>
+      <div class="photo-card green"></div>
+    </main>
+  </div>
+</body>
+</html>
