@@ -95,3 +95,75 @@
     form.reset();
   });
 })();
+// ===== Option D: Form Data Persistence (volunteer form) =====
+(() => {
+  const FORM_KEY = 'volunteerFormData';
+  const form = document.getElementById('volunteer-form');
+  if (!form) return;
+
+  const controls = Array.from(
+    form.querySelectorAll('input, select, textarea')
+  ).filter(el => el.id);
+
+  // Save current form values into localStorage
+  function saveForm() {
+    try {
+      const data = {};
+      controls.forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          data[el.id] = el.checked;
+        } else {
+          data[el.id] = el.value;
+        }
+      });
+      localStorage.setItem(FORM_KEY, JSON.stringify(data));
+    } catch {
+    }
+  }
+
+  // Restore saved values (if any)
+  function restoreForm() {
+    try {
+      const raw = localStorage.getItem(FORM_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      controls.forEach(el => {
+        if (!(el.id in data)) return;
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          el.checked = !!data[el.id];
+        } else {
+          el.value = data[el.id] ?? '';
+        }
+      });
+    } catch {
+    }
+  }
+
+  function clearSaved() {
+    try { localStorage.removeItem(FORM_KEY); } catch {}
+  }
+
+  form.addEventListener('input', saveForm);
+  form.addEventListener('change', saveForm);
+
+  form.addEventListener('submit', () => {
+    clearSaved();
+  });
+
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.className = 'btn-secondary';
+  clearBtn.textContent = 'Clear saved data';
+  clearBtn.addEventListener('click', () => {
+    form.reset();
+    clearSaved();
+    form.dispatchEvent(new Event('input', { bubbles: true }));
+    const msg = document.getElementById('volunteer-feedback');
+    if (msg) msg.textContent = 'Saved form data cleared.';
+  });
+  const submitBtn = form.querySelector('button[type="submit"], button:not([type])');
+  (submitBtn?.parentNode || form).insertBefore(clearBtn, submitBtn?.nextSibling || null);
+
+  // Initial restore
+  restoreForm();
+})();
