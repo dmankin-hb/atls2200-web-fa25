@@ -19,83 +19,46 @@
   });
 })();
 
-// resource filter
-(() => {
-  const filterInput = document.getElementById('filter-input');
-  const resourceList = document.getElementById('resource-list');
-  const feedback = document.getElementById('filter-feedback');
-  const boxes = [
-    document.getElementById('chk-delivery'),
-    document.getElementById('chk-volunteer'),
-    document.getElementById('chk-donate'),
-    document.getElementById('chk-partners')
-  ].filter(Boolean);
-
-  if (!resourceList || !feedback) return;
-
-  function applyFilters() {
-    const q = (filterInput && filterInput.value ? filterInput.value : '').toLowerCase();
-    const required = boxes.filter(b => b.checked).map(b => b.id.replace('chk-',''));
-    let shown = 0;
-
-    resourceList.querySelectorAll('li').forEach((li) => {
-      const hay = ((li.dataset.tags || '') + ' ' + li.textContent).toLowerCase();
-      let ok = !q || hay.includes(q);
-      if (ok && required.length) ok = required.every(t => hay.includes(t));
-      li.style.display = ok ? '' : 'none';
-      if (ok) shown += 1;
-    });
-
-    feedback.textContent = `${shown} result${shown === 1 ? '' : 's'}`;
-  }
-
-  if (filterInput) filterInput.addEventListener('input', applyFilters);
-  boxes.forEach(b => b.addEventListener('change', applyFilters));
-  const resetBtn = document.getElementById('reset-filters');
-  if (resetBtn) resetBtn.addEventListener('click', () => setTimeout(applyFilters, 0));
-
-  applyFilters();
-})();
-
-// simple practice form validation
+// volunteer form validation + feedback
 (() => {
   const form = document.getElementById('volunteer-form');
   if (!form) return;
 
-  const nameIn = document.getElementById('v-name');
-  const emailIn = document.getElementById('v-email');
-  const nameErr = document.getElementById('name-err');
-  const emailErr = document.getElementById('email-err');
-  const feedbackForm = document.getElementById('volunteer-feedback');
+  const nameIn = form.querySelector('#v-name');
+  const emailIn = form.querySelector('#v-email');
+  const nameErr = form.querySelector('#name-error');
+  const emailErr = form.querySelector('#email-error');
+  const feedback = form.querySelector('#volunteer-feedback');
 
-  const validEmail = (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+  function validEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+  }
 
-  form.addEventListener('submit', (e) => {
-    let ok = true;
+  function clearErrors() {
     if (nameErr) nameErr.textContent = '';
     if (emailErr) emailErr.textContent = '';
-    if (feedbackForm) feedbackForm.textContent = '';
+  }
 
+  form.addEventListener('submit', (e) => {
+    clearErrors();
+    let ok = true;
     if (!nameIn || !nameIn.value.trim()) {
-      if (nameErr) nameErr.textContent = 'Enter your name';
+      if (nameErr) nameErr.textContent = 'Please enter your name';
       ok = false;
     }
     if (!emailIn || !validEmail(emailIn.value)) {
-      if (emailErr) emailErr.textContent = 'Enter valid email';
+      if (emailErr) emailErr.textContent = 'Enter a valid email';
       ok = false;
     }
-
-    if (!ok) {
-      e.preventDefault();
-      return;
-    }
-
-    e.preventDefault(); // demo only
-    if (feedbackForm) feedbackForm.textContent = 'Thanks! Use Linktree for real sign-up.';
+    e.preventDefault();
+    if (!ok) return;
+    if (feedback) feedback.textContent = 'Thanks! Use Linktree for real sign-up.';
     form.reset();
+    try { localStorage.removeItem('volunteerFormData'); } catch {}
   });
 })();
-// ===== Option D: Form Data Persistence (volunteer form) =====
+
+// localStorage form persistence
 (() => {
   const FORM_KEY = 'volunteerFormData';
   const form = document.getElementById('volunteer-form');
@@ -105,38 +68,25 @@
     form.querySelectorAll('input, select, textarea')
   ).filter(el => el.id);
 
-  // Save current form values into localStorage
   function saveForm() {
     try {
       const data = {};
       controls.forEach(el => {
-        if (el.type === 'checkbox' || el.type === 'radio') {
-          data[el.id] = el.checked;
-        } else {
-          data[el.id] = el.value;
-        }
+        data[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
       });
       localStorage.setItem(FORM_KEY, JSON.stringify(data));
-    } catch {
-    }
+    } catch {}
   }
 
-  // Restore saved values (if any)
   function restoreForm() {
     try {
-      const raw = localStorage.getItem(FORM_KEY);
-      if (!raw) return;
-      const data = JSON.parse(raw);
+      const data = JSON.parse(localStorage.getItem(FORM_KEY) || '{}');
       controls.forEach(el => {
         if (!(el.id in data)) return;
-        if (el.type === 'checkbox' || el.type === 'radio') {
-          el.checked = !!data[el.id];
-        } else {
-          el.value = data[el.id] ?? '';
-        }
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!data[el.id];
+        else el.value = data[el.id] ?? '';
       });
-    } catch {
-    }
+    } catch {}
   }
 
   function clearSaved() {
@@ -146,10 +96,7 @@
   form.addEventListener('input', saveForm);
   form.addEventListener('change', saveForm);
 
-  form.addEventListener('submit', () => {
-    clearSaved();
-  });
-
+  // clear button
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'btn-secondary';
@@ -164,6 +111,36 @@
   const submitBtn = form.querySelector('button[type="submit"], button:not([type])');
   (submitBtn?.parentNode || form).insertBefore(clearBtn, submitBtn?.nextSibling || null);
 
-  // Initial restore
   restoreForm();
+})();
+
+// optional filter logic
+(() => {
+  const filterInput = document.getElementById('filter');
+  const boxes = Array.from(document.querySelectorAll('[data-filter-group] input[type="checkbox"]'));
+  const list = document.getElementById('resource-list');
+  const counter = document.getElementById('results-count');
+  if (!list) return;
+
+  function applyFilters() {
+    const q = (filterInput?.value || '').toLowerCase().trim();
+    const active = new Set(boxes.filter(b => b.checked).map(b => b.value));
+    let shown = 0;
+    list.querySelectorAll('[data-item]').forEach(item => {
+      const text = item.textContent.toLowerCase();
+      const tags = (item.getAttribute('data-tags') || '').split(',').map(s => s.trim());
+      const matchesText = !q || text.includes(q);
+      const matchesTags = active.size === 0 || tags.some(t => active.has(t));
+      const show = matchesText && matchesTags;
+      item.style.display = show ? '' : 'none';
+      if (show) shown++;
+    });
+    if (counter) counter.textContent = `${shown} result${shown === 1 ? '' : 's'}`;
+  }
+
+  if (filterInput) filterInput.addEventListener('input', applyFilters);
+  boxes.forEach(b => b.addEventListener('change', applyFilters));
+  const resetBtn = document.getElementById('reset-filters');
+  if (resetBtn) resetBtn.addEventListener('click', () => setTimeout(applyFilters, 0));
+  applyFilters();
 })();
