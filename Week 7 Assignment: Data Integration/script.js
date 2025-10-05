@@ -19,45 +19,35 @@
   });
 })();
 
-// global network indicator (shows whenever window.fetch runs)
+// optional fetch banner (only shows if element exists)
 (() => {
   const banner = document.getElementById('net-indicator');
   if (!banner || !('fetch' in window)) return;
   const originalFetch = window.fetch.bind(window);
   let pending = 0;
-  function show(){ banner.hidden = false; }
-  function hide(){ banner.hidden = pending > 0 ? false : true; }
+  const show = () => { banner.hidden = false; };
+  const hide = () => { banner.hidden = pending > 0 ? false : true; };
   window.fetch = (...args) => {
-    pending++;
-    show();
-    return originalFetch(...args)
-      .finally(() => { pending = Math.max(0, pending-1); hide(); });
+    pending++; show();
+    return originalFetch(...args).finally(() => { pending = Math.max(0, pending-1); hide(); });
   };
 })();
 
-// helpers
+// tiny storage helpers
 const storage = {
-  get(key, fallback=null){
-    try{ return JSON.parse(localStorage.getItem(key) ?? 'null') ?? fallback; }catch{ return fallback; }
-  },
-  set(key, value){
-    try{ localStorage.setItem(key, JSON.stringify(value)); }catch{}
-  },
-  remove(key){
-    try{ localStorage.removeItem(key); }catch{}
-  }
+  get(key, fallback=null){ try{ return JSON.parse(localStorage.getItem(key) ?? 'null') ?? fallback; }catch{ return fallback; } },
+  set(key, value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch{} },
+  remove(key){ try{ localStorage.removeItem(key); }catch{} }
 };
 const now = () => Date.now();
-const isExpired = (savedAt, ttlDays) => {
-  const ttlMs = (ttlDays ?? 0) * 24*60*60*1000;
-  return !savedAt || (ttlMs > 0 && (now() - savedAt) > ttlMs);
-};
+const days = (n) => n*24*60*60*1000;
+const isExpired = (ts, ttlDays) => !ts || (ttlDays>0 && (now()-ts) > days(ttlDays));
 
-// volunteer form validation + persistence
+// volunteer form: draft + log
 (() => {
-  const FORM_KEY = 'volunteerFormData';
-  const PERSIST_KEY = 'persistVolForm';
-  const FORM_TTL_DAYS = 14;
+  const DRAFT_KEY = 'volunteerFormDraft';          // single draft for autofill
+  const LOG_KEY   = 'volunteerFormData';           // array of entries (your “multiple”)
+  const TTL_DAYS  = 14;
 
   const form = document.getElementById('volunteer-form');
   if (!form) return;
@@ -71,82 +61,84 @@ const isExpired = (savedAt, ttlDays) => {
   const clearBtn = form.querySelector('#btn-clear');
 
   const VALID_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-  function validEmail(v){ return VALID_EMAIL.test(String(v||'').trim()); }
 
-  function readPersistSetting(){
-    const saved = storage.get(PERSIST_KEY);
-    if (typeof saved === 'boolean') persistOpt.checked = saved;
-  }
-  function writePersistSetting(){
-    storage.set(PERSIST_KEY, !!persistOpt.checked);
+  // keep comments short
+  const readLog = () => Array.isArray(storage.get(LOG_KEY)) ? storage.get(LOG_KEY) : [];
+  const writeLog = (arr) => storage.set(LOG_KEY, arr);
+
+  function purgeOldLog() {
+    const arr = readLog().filter(e => !isExpired(e.savedAt, TTL_DAYS));
+    writeLog(arr);
   }
 
-  function saveForm(){
-    if (!persistOpt.checked) return;
-    const data = { 
+  function saveDraft() {
+    if (!persistOpt?.checked) return;
+    storage.set(DRAFT_KEY, {
       savedAt: now(),
       name: nameIn?.value ?? '',
       email: emailIn?.value ?? ''
-    };
-    storage.set(FORM_KEY, data);
+    });
   }
 
-  function restoreForm(){
-    const data = storage.get(FORM_KEY);
-    if (!data) return;
-    if (isExpired(data.savedAt, FORM_TTL_DAYS)){
-      storage.remove(FORM_KEY);
-      return;
-    }
-    if (nameIn) nameIn.value = data.name ?? '';
-    if (emailIn) emailIn.value = data.email ?? '';
+  function restoreDraft() {
+    const d = storage.get(DRAFT_KEY);
+    if (!d) return;
+    if (isExpired(d.savedAt, TTL_DAYS)) { storage.remove(DRAFT_KEY); return; }
+    if (nameIn) nameIn.value = d.name ?? '';
+    if (emailIn) emailIn.value = d.email ?? '';
   }
 
-  function clearSaved(){
-    storage.remove(FORM_KEY);
-    if (feedback) feedback.textContent = 'Saved form data cleared.';
+  function appendLogEntry() {
+    if (!persistOpt?.checked) return;
+    const arr = readLog();
+    arr.push({
+      savedAt: now(),
+      name: nameIn?.value ?? '',
+      email: emailIn?.value ?? ''
+    });
+    writeLog(arr);
   }
 
-  function clearErrors(){
-    if (nameErr) nameErr.textContent = '';
-    if (emailErr) emailErr.textContent = '';
+  function clearErrors(){ if (nameErr) nameErr.textContent = ''; if (emailErr) emailErr.textContent = ''; }
+  function validate() {
+    let ok = true;
+    if (!nameIn?.value.trim()) { if (nameErr) nameErr.textContent = 'Please enter your name'; ok = false; }
+    if (!emailIn?.value.trim() || !VALID_EMAIL.test(emailIn.value)) { if (emailErr) emailErr.textContent = 'Enter a valid email'; ok = false; }
+    return ok;
   }
 
-  readPersistSetting();
-  restoreForm();
+  // init
+  purgeOldLog();
+  restoreDraft();
 
-  form.addEventListener('input', saveForm);
+  // live save draft
+  form.addEventListener('input', saveDraft);
   form.addEventListener('change', (e) => {
-    if (e.target === persistOpt){
-      writePersistSetting();
-      if (!persistOpt.checked) clearSaved();
-      else saveForm();
-    }else{
-      saveForm();
+    if (e.target === persistOpt) {
+      if (!persistOpt.checked) { storage.remove(DRAFT_KEY); storage.remove(LOG_KEY); if (feedback) feedback.textContent = 'Saving is off. Data cleared.'; }
+      else { saveDraft(); if (feedback) feedback.textContent = 'Saving is on.'; }
+    } else {
+      saveDraft();
     }
   });
 
+  // submit -> validate + add to log + keep draft
   form.addEventListener('submit', (e) => {
-    clearErrors();
-    let ok = true;
-    if (!nameIn || !nameIn.value.trim()) {
-      if (nameErr) nameErr.textContent = 'Please enter your name';
-      ok = false;
-    }
-    if (!emailIn || !validEmail(emailIn.value)) {
-      if (emailErr) emailErr.textContent = 'Enter a valid email';
-      ok = false;
-    }
     e.preventDefault();
-    if (!ok) return;
+    clearErrors();
+    if (!validate()) return;
+    appendLogEntry();     // this is the “multiple entries” part
+    saveDraft();          // keep latest for autofill
     if (feedback) feedback.textContent = 'Thanks! Use Linktree for real sign-up.';
   });
 
+  // clear both
   if (clearBtn){
     clearBtn.addEventListener('click', () => {
       form.reset();
-      clearSaved();
-      form.dispatchEvent(new Event('input', { bubbles:true }));
+      storage.remove(DRAFT_KEY);
+      storage.remove(LOG_KEY);
+      if (feedback) feedback.textContent = 'Saved form data cleared.';
     });
   }
 })();
@@ -183,48 +175,36 @@ const isExpired = (savedAt, ttlDays) => {
     if (chkDonate) chkDonate.checked = !!s.donate;
     if (chkPartners) chkPartners.checked = !!s.partners;
   }
-  function save(){
-    storage.set(FILTERS_KEY, getState());
-  }
+  function save(){ storage.set(FILTERS_KEY, getState()); }
   function restore(){
     const s = storage.get(FILTERS_KEY);
     if (!s) return;
-    if (isExpired(s.savedAt, FILTER_TTL_DAYS)){
-      storage.remove(FILTERS_KEY);
-      return;
-    }
+    if (isExpired(s.savedAt, FILTER_TTL_DAYS)){ storage.remove(FILTERS_KEY); return; }
     setState(s);
   }
 
   function apply(){
     const s = getState();
-    const activeTags = new Set(
-      ['delivery','volunteer','donate','partners'].filter(k => s[k])
-    );
+    const active = new Set(['delivery','volunteer','donate','partners'].filter(k => s[k]));
     let shown = 0;
     list.querySelectorAll('li[data-tags]').forEach(li => {
       const tags = (li.getAttribute('data-tags') || '').split(',').map(t => t.trim());
       const text = li.textContent.toLowerCase();
       const q = s.q.toLowerCase();
-      const matchesText = !q || text.includes(q);
-      const matchesTags = activeTags.size === 0 || tags.some(t => activeTags.has(t));
-      const show = matchesText && matchesTags;
+      const okText = !q || text.includes(q);
+      const okTags = active.size === 0 || tags.some(t => active.has(t));
+      const show = okText && okTags;
       li.style.display = show ? '' : 'none';
       if (show) shown++;
     });
     if (feedback) feedback.textContent = `${shown} result${shown === 1 ? '' : 's'}`;
   }
 
-  function onChange(){
-    save();
-    apply();
-  }
-
   restore();
   apply();
 
-  form.addEventListener('submit', (e) => { e.preventDefault(); onChange(); });
-  form.addEventListener('input', onChange);
+  form.addEventListener('submit', (e) => { e.preventDefault(); save(); apply(); });
+  form.addEventListener('input', () => { save(); apply(); });
   document.getElementById('reset-filters')?.addEventListener('click', () => {
     setTimeout(() => { storage.remove(FILTERS_KEY); apply(); }, 0);
   });
