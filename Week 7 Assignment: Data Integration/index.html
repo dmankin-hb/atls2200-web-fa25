@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rocky Mountain Mutual Aid Network</title>
+
+  <!-- fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Instrument+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+
+  <!-- nav -->
+  <nav class="topbar" aria-label="Primary">
+    <div class="wrap">
+      <a class="brand" href="#home">RMMAN</a>
+      <button id="menuButton" aria-expanded="false" aria-controls="navList" aria-label="Toggle menu">☰ Menu</button>
+      <ul id="navList" class="nav-list">
+        <li><a href="#home" aria-current="page">Home</a></li>
+        <li><a href="#resources">Get Groceries</a></li>
+        <li><a href="#volunteer">Volunteer</a></li>
+        <li><a href="#events">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- hero -->
+  <header id="home" class="hero" role="banner">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <h1>Neighbors helping neighbors — Denver Metro</h1>
+        <p class="sub">Free weekly groceries for disabled, high-risk, and seniors.</p>
+        <form class="quick-search" action="#resources">
+          <label class="sr-only" for="qs">Search</label>
+          <input id="qs" type="search" placeholder="Search: delivery, volunteer…" />
+          <button>Search</button>
+        </form>
+        <div class="btn-row">
+          <a class="btn-secondary" href="https://linktr.ee/rmmutualaid" rel="noopener">Linktree</a>
+          <a class="btn-secondary" href="https://rmman.org" rel="noopener">rmman.org</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="hero_community_food_support_800x500.png" alt="Community food support" />
+      </div>
+    </div>
+  </header>
+
+  <!-- main layout (GRID #1 with named areas) -->
+  <section class="section">
+    <div id="main" class="wrap grid-home" role="main">
+      <aside class="panel home-status">
+        <h2>What we do</h2>
+        <ul class="list">
+          <li>Weekly grocery deliveries</li>
+          <li>Priority for disabled/high-risk/seniors</li>
+          <li>Work with food rescue partners</li>
+        </ul>
+      </aside>
+
+      <section id="resources" class="panel home-resources">
+        <h2>Get Groceries / Help / Support</h2>
+
+        <form id="filter-form" class="filters" role="search" action="#resources" method="get">
+          <label class="label" for="filter-input">Filter</label>
+          <input id="filter-input" type="search" placeholder="Try: delivery, donate" />
+          <div class="toggle-row" aria-label="Category filters">
+            <label><input type="checkbox" id="chk-delivery" /> Delivery</label>
+            <label><input type="checkbox" id="chk-volunteer" /> Volunteer</label>
+            <label><input type="checkbox" id="chk-donate" /> Donate</label>
+            <label><input type="checkbox" id="chk-partners" /> Partners</label>
+          </div>
+          <div class="btn-row">
+            <button>Apply</button>
+            <button type="reset" id="reset-filters" class="btn-secondary">Reset</button>
+          </div>
+        </form>
+
+        <ul id="resource-list" class="resource-list">
+          <li data-tags="delivery">
+            <img src="deliveries_600x400.png" alt="Delivery" />
+            <div>
+              <h3><a href="https://linktr.ee/rmmutualaid" rel="noopener">Request Delivery</a></h3>
+              <p>Free groceries delivered across Denver.</p>
+            </div>
+          </li>
+          <li data-tags="volunteer">
+            <img src="volunteers_600x400.png" alt="Volunteers" />
+            <div>
+              <h3><a href="https://linktr.ee/rmmutualaid" rel="noopener">Volunteer</a></h3>
+              <p>Help pack or drive weekly routes.</p>
+            </div>
+          </li>
+          <li data-tags="donate">
+            <img src="donate_600x400.png" alt="Donate" />
+            <div>
+              <h3><a href="https://linktr.ee/rmmutualaid" rel="noopener">Donate</a></h3>
+              <p>Support fuel, groceries, supplies.</p>
+            </div>
+          </li>
+          <li data-tags="partners">
+            <img src="partners_600x400.png" alt="Partners" />
+            <div>
+              <h3>Community Partners</h3>
+              <p>Work with local food rescue orgs.</p>
+            </div>
+          </li>
+        </ul>
+        <div id="filter-feedback" class="note" aria-live="polite"></div>
+      </section>
+
+      <section id="volunteer" class="panel home-volunteer">
+        <h2>Volunteer</h2>
+        <img src="volunteer_banner_640x360.png" alt="Volunteer" class="banner-img" />
+        <p>Drive, pack, or help coordinate.</p>
+        <p><a class="btn-secondary" href="https://linktr.ee/rmmutualaid" rel="noopener">Official Sign-up</a></p>
+
+        <!-- practice form -->
+        <form id="volunteer-form" novalidate>
+          <label class="label" for="v-name">Name</label>
+          <input id="v-name" />
+          <div id="name-err" class="error" aria-live="polite"></div>
+
+          <label class="label" for="v-email">Email</label>
+          <input id="v-email" type="email" />
+          <div id="email-err" class="error" aria-live="polite"></div>
+
+          <button>Practice form</button>
+          <div id="volunteer-feedback" class="note" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section id="contact" class="panel home-contact">
+        <h2>Contact</h2>
+        <img src="contact_banner_640x360.png" alt="Contact" class="banner-img" />
+        <p>
+          Links: <a href="https://linktr.ee/rmmutualaid" rel="noopener">linktr.ee/rmmutualaid</a><br />
+          Site: <a href="https://rmman.org" rel="noopener">rmman.org</a>
+        </p>
+      </section>
+    </div>
+  </section>
+
+  <!-- about/events (GRID #2 with named areas) -->
+  <section id="events" class="section">
+    <div class="wrap grid-events">
+      <h2 class="panel ev-hero">About & Events</h2>
+
+      <div class="panel ev-about">
+        <h3>About RMMAN</h3>
+        <p class="small">Started in 2020, volunteer-run, delivering groceries around Denver metro.</p>
+        <p><a href="https://linktr.ee/rmmutualaid" rel="noopener">Request / Volunteer / Donate</a></p>
+      </div>
+
+      <div class="panel ev-list">
+        <h3>Examples</h3>
+        <ul class="event-cards">
+          <li>
+            <img src="routes_640x360.png" alt="Routes" />
+            <div><h4>Weekly Routes</h4><p>Free delivery to households across Denver.</p></div>
+          </li>
+          <li>
+            <img src="food_rescue_640x360.png" alt="Food Rescue" />
+            <div><h4>Food Rescue</h4><p>Staples and produce from community partners.</p></div>
+          </li>
+          <li>
+            <img src="community_care_640x360.png" alt="Community Care" />
+            <div><h4>Community Care</h4><p>No ID or eligibility paperwork required.</p></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel ev-note">
+        <h3>Links</h3>
+        <p><a href="https://linktr.ee/rmmutualaid" rel="noopener">linktr.ee/rmmutualaid</a> • <a href="https://rmman.org" rel="noopener">rmman.org</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p><small>© 2025 Rocky Mountain Mutual Aid Network</small></p>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
