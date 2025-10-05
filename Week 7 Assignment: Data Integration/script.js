@@ -19,25 +19,112 @@
   });
 })();
 
-// volunteer form validation + feedback
+// global network indicator (shows whenever window.fetch runs)
 (() => {
+  const banner = document.getElementById('net-indicator');
+  if (!banner || !('fetch' in window)) return;
+  const originalFetch = window.fetch.bind(window);
+  let pending = 0;
+  function show(){ banner.hidden = false; }
+  function hide(){ banner.hidden = pending > 0 ? false : true; }
+  window.fetch = (...args) => {
+    pending++;
+    show();
+    return originalFetch(...args)
+      .finally(() => { pending = Math.max(0, pending-1); hide(); });
+  };
+})();
+
+// helpers
+const storage = {
+  get(key, fallback=null){
+    try{ return JSON.parse(localStorage.getItem(key) ?? 'null') ?? fallback; }catch{ return fallback; }
+  },
+  set(key, value){
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch{}
+  },
+  remove(key){
+    try{ localStorage.removeItem(key); }catch{}
+  }
+};
+const now = () => Date.now();
+const isExpired = (savedAt, ttlDays) => {
+  const ttlMs = (ttlDays ?? 0) * 24*60*60*1000;
+  return !savedAt || (ttlMs > 0 && (now() - savedAt) > ttlMs);
+};
+
+// volunteer form validation + persistence
+(() => {
+  const FORM_KEY = 'volunteerFormData';
+  const PERSIST_KEY = 'persistVolForm';
+  const FORM_TTL_DAYS = 14;
+
   const form = document.getElementById('volunteer-form');
   if (!form) return;
 
   const nameIn = form.querySelector('#v-name');
   const emailIn = form.querySelector('#v-email');
-  const nameErr = form.querySelector('#name-error');
-  const emailErr = form.querySelector('#email-error');
+  const nameErr = form.querySelector('#name-err');
+  const emailErr = form.querySelector('#email-err');
   const feedback = form.querySelector('#volunteer-feedback');
+  const persistOpt = form.querySelector('#persist-opt-in');
+  const clearBtn = form.querySelector('#btn-clear');
 
-  function validEmail(v) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || '').trim());
+  const VALID_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+  function validEmail(v){ return VALID_EMAIL.test(String(v||'').trim()); }
+
+  function readPersistSetting(){
+    const saved = storage.get(PERSIST_KEY);
+    if (typeof saved === 'boolean') persistOpt.checked = saved;
+  }
+  function writePersistSetting(){
+    storage.set(PERSIST_KEY, !!persistOpt.checked);
   }
 
-  function clearErrors() {
+  function saveForm(){
+    if (!persistOpt.checked) return;
+    const data = { 
+      savedAt: now(),
+      name: nameIn?.value ?? '',
+      email: emailIn?.value ?? ''
+    };
+    storage.set(FORM_KEY, data);
+  }
+
+  function restoreForm(){
+    const data = storage.get(FORM_KEY);
+    if (!data) return;
+    if (isExpired(data.savedAt, FORM_TTL_DAYS)){
+      storage.remove(FORM_KEY);
+      return;
+    }
+    if (nameIn) nameIn.value = data.name ?? '';
+    if (emailIn) emailIn.value = data.email ?? '';
+  }
+
+  function clearSaved(){
+    storage.remove(FORM_KEY);
+    if (feedback) feedback.textContent = 'Saved form data cleared.';
+  }
+
+  function clearErrors(){
     if (nameErr) nameErr.textContent = '';
     if (emailErr) emailErr.textContent = '';
   }
+
+  readPersistSetting();
+  restoreForm();
+
+  form.addEventListener('input', saveForm);
+  form.addEventListener('change', (e) => {
+    if (e.target === persistOpt){
+      writePersistSetting();
+      if (!persistOpt.checked) clearSaved();
+      else saveForm();
+    }else{
+      saveForm();
+    }
+  });
 
   form.addEventListener('submit', (e) => {
     clearErrors();
@@ -53,94 +140,92 @@
     e.preventDefault();
     if (!ok) return;
     if (feedback) feedback.textContent = 'Thanks! Use Linktree for real sign-up.';
-    form.reset();
-    try { localStorage.removeItem('volunteerFormData'); } catch {}
   });
+
+  if (clearBtn){
+    clearBtn.addEventListener('click', () => {
+      form.reset();
+      clearSaved();
+      form.dispatchEvent(new Event('input', { bubbles:true }));
+    });
+  }
 })();
 
-// localStorage form persistence
+// resource filters + persistence
 (() => {
-  const FORM_KEY = 'volunteerFormData';
-  const form = document.getElementById('volunteer-form');
-  if (!form) return;
+  const FILTERS_KEY = 'resourceFilters';
+  const FILTER_TTL_DAYS = 7;
 
-  const controls = Array.from(
-    form.querySelectorAll('input, select, textarea')
-  ).filter(el => el.id);
-
-  function saveForm() {
-    try {
-      const data = {};
-      controls.forEach(el => {
-        data[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
-      });
-      localStorage.setItem(FORM_KEY, JSON.stringify(data));
-    } catch {}
-  }
-
-  function restoreForm() {
-    try {
-      const data = JSON.parse(localStorage.getItem(FORM_KEY) || '{}');
-      controls.forEach(el => {
-        if (!(el.id in data)) return;
-        if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!data[el.id];
-        else el.value = data[el.id] ?? '';
-      });
-    } catch {}
-  }
-
-  function clearSaved() {
-    try { localStorage.removeItem(FORM_KEY); } catch {}
-  }
-
-  form.addEventListener('input', saveForm);
-  form.addEventListener('change', saveForm);
-
-  // clear button
-  const clearBtn = document.createElement('button');
-  clearBtn.type = 'button';
-  clearBtn.className = 'btn-secondary';
-  clearBtn.textContent = 'Clear saved data';
-  clearBtn.addEventListener('click', () => {
-    form.reset();
-    clearSaved();
-    form.dispatchEvent(new Event('input', { bubbles: true }));
-    const msg = document.getElementById('volunteer-feedback');
-    if (msg) msg.textContent = 'Saved form data cleared.';
-  });
-  const submitBtn = form.querySelector('button[type="submit"], button:not([type])');
-  (submitBtn?.parentNode || form).insertBefore(clearBtn, submitBtn?.nextSibling || null);
-
-  restoreForm();
-})();
-
-// optional filter logic
-(() => {
-  const filterInput = document.getElementById('filter');
-  const boxes = Array.from(document.querySelectorAll('[data-filter-group] input[type="checkbox"]'));
+  const form = document.getElementById('filter-form');
+  const qIn = document.getElementById('filter-input');
+  const chkDelivery = document.getElementById('chk-delivery');
+  const chkVolunteer = document.getElementById('chk-volunteer');
+  const chkDonate = document.getElementById('chk-donate');
+  const chkPartners = document.getElementById('chk-partners');
   const list = document.getElementById('resource-list');
-  const counter = document.getElementById('results-count');
-  if (!list) return;
+  const feedback = document.getElementById('filter-feedback');
+  if (!form || !list) return;
 
-  function applyFilters() {
-    const q = (filterInput?.value || '').toLowerCase().trim();
-    const active = new Set(boxes.filter(b => b.checked).map(b => b.value));
+  function getState(){
+    return {
+      q: (qIn?.value ?? '').trim(),
+      delivery: !!chkDelivery?.checked,
+      volunteer: !!chkVolunteer?.checked,
+      donate: !!chkDonate?.checked,
+      partners: !!chkPartners?.checked,
+      savedAt: now()
+    };
+  }
+  function setState(s){
+    if (qIn) qIn.value = s.q ?? '';
+    if (chkDelivery) chkDelivery.checked = !!s.delivery;
+    if (chkVolunteer) chkVolunteer.checked = !!s.volunteer;
+    if (chkDonate) chkDonate.checked = !!s.donate;
+    if (chkPartners) chkPartners.checked = !!s.partners;
+  }
+  function save(){
+    storage.set(FILTERS_KEY, getState());
+  }
+  function restore(){
+    const s = storage.get(FILTERS_KEY);
+    if (!s) return;
+    if (isExpired(s.savedAt, FILTER_TTL_DAYS)){
+      storage.remove(FILTERS_KEY);
+      return;
+    }
+    setState(s);
+  }
+
+  function apply(){
+    const s = getState();
+    const activeTags = new Set(
+      ['delivery','volunteer','donate','partners'].filter(k => s[k])
+    );
     let shown = 0;
-    list.querySelectorAll('[data-item]').forEach(item => {
-      const text = item.textContent.toLowerCase();
-      const tags = (item.getAttribute('data-tags') || '').split(',').map(s => s.trim());
+    list.querySelectorAll('li[data-tags]').forEach(li => {
+      const tags = (li.getAttribute('data-tags') || '').split(',').map(t => t.trim());
+      const text = li.textContent.toLowerCase();
+      const q = s.q.toLowerCase();
       const matchesText = !q || text.includes(q);
-      const matchesTags = active.size === 0 || tags.some(t => active.has(t));
+      const matchesTags = activeTags.size === 0 || tags.some(t => activeTags.has(t));
       const show = matchesText && matchesTags;
-      item.style.display = show ? '' : 'none';
+      li.style.display = show ? '' : 'none';
       if (show) shown++;
     });
-    if (counter) counter.textContent = `${shown} result${shown === 1 ? '' : 's'}`;
+    if (feedback) feedback.textContent = `${shown} result${shown === 1 ? '' : 's'}`;
   }
 
-  if (filterInput) filterInput.addEventListener('input', applyFilters);
-  boxes.forEach(b => b.addEventListener('change', applyFilters));
-  const resetBtn = document.getElementById('reset-filters');
-  if (resetBtn) resetBtn.addEventListener('click', () => setTimeout(applyFilters, 0));
-  applyFilters();
+  function onChange(){
+    save();
+    apply();
+  }
+
+  restore();
+  apply();
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); onChange(); });
+  form.addEventListener('input', onChange);
+  document.getElementById('reset-filters')?.addEventListener('click', () => {
+    setTimeout(() => { storage.remove(FILTERS_KEY); apply(); }, 0);
+  });
 })();

@@ -24,6 +24,7 @@
         <li><a href="#resources">Get Groceries</a></li>
         <li><a href="#volunteer">Volunteer</a></li>
         <li><a href="#events">About</a></li>
+        <li><a href="#privacy">Privacy</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </div>
@@ -51,7 +52,7 @@
     </div>
   </header>
 
-  <!-- main layout (GRID #1 with named areas) -->
+  <!-- main layout -->
   <section class="section">
     <div id="main" class="wrap grid-home" role="main">
       <aside class="panel home-status">
@@ -82,28 +83,28 @@
         </form>
 
         <ul id="resource-list" class="resource-list">
-          <li data-tags="delivery">
+          <li class="card" data-tags="delivery">
             <img src="deliveries_600x400.png" alt="Delivery" />
             <div>
               <h3><a href="https://linktr.ee/rmmutualaid" rel="noopener">Request Delivery</a></h3>
               <p>Free groceries delivered across Denver.</p>
             </div>
           </li>
-          <li data-tags="volunteer">
+          <li class="card" data-tags="volunteer">
             <img src="volunteers_600x400.png" alt="Volunteers" />
             <div>
               <h3><a href="https://linktr.ee/rmmutualaid" rel="noopener">Volunteer</a></h3>
               <p>Help pack or drive weekly routes.</p>
             </div>
           </li>
-          <li data-tags="donate">
+          <li class="card" data-tags="donate">
             <img src="donate_600x400.png" alt="Donate" />
             <div>
               <h3><a href="https://linktr.ee/rmmutualaid" rel="noopener">Donate</a></h3>
               <p>Support fuel, groceries, supplies.</p>
             </div>
           </li>
-          <li data-tags="partners">
+          <li class="card" data-tags="partners">
             <img src="partners_600x400.png" alt="Partners" />
             <div>
               <h3>Community Partners</h3>
@@ -123,14 +124,21 @@
         <!-- practice form -->
         <form id="volunteer-form" novalidate>
           <label class="label" for="v-name">Name</label>
-          <input id="v-name" />
+          <input id="v-name" autocomplete="name" />
           <div id="name-err" class="error" aria-live="polite"></div>
 
           <label class="label" for="v-email">Email</label>
-          <input id="v-email" type="email" />
+          <input id="v-email" type="email" autocomplete="email" />
           <div id="email-err" class="error" aria-live="polite"></div>
 
-          <button>Practice form</button>
+          <div class="toggle-row">
+            <label><input type="checkbox" id="persist-opt-in" checked /> Remember my form info on this device (14 days)</label>
+          </div>
+
+          <div class="btn-row">
+            <button>Practice form</button>
+            <button type="button" id="btn-clear" class="btn-secondary">Clear saved data</button>
+          </div>
           <div id="volunteer-feedback" class="note" aria-live="polite"></div>
         </form>
       </section>
@@ -146,7 +154,7 @@
     </div>
   </section>
 
-  <!-- about/events (GRID #2 with named areas) -->
+  <!-- about/events -->
   <section id="events" class="section">
     <div class="wrap grid-events">
       <h2 class="panel ev-hero">About & Events</h2>
@@ -160,15 +168,15 @@
       <div class="panel ev-list">
         <h3>Examples</h3>
         <ul class="event-cards">
-          <li>
+          <li class="card">
             <img src="routes_640x360.png" alt="Routes" />
             <div><h4>Weekly Routes</h4><p>Free delivery to households across Denver.</p></div>
           </li>
-          <li>
+          <li class="card">
             <img src="food_rescue_640x360.png" alt="Food Rescue" />
             <div><h4>Food Rescue</h4><p>Staples and produce from community partners.</p></div>
           </li>
-          <li>
+          <li class="card">
             <img src="community_care_640x360.png" alt="Community Care" />
             <div><h4>Community Care</h4><p>No ID or eligibility paperwork required.</p></div>
           </li>
@@ -178,6 +186,24 @@
       <div class="panel ev-note">
         <h3>Links</h3>
         <p><a href="https://linktr.ee/rmmutualaid" rel="noopener">linktr.ee/rmmutualaid</a> • <a href="https://rmman.org" rel="noopener">rmman.org</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- privacy & controls -->
+  <section id="privacy" class="section">
+    <div class="wrap">
+      <div class="panel">
+        <h2>Privacy & Controls</h2>
+        <p class="small">Short version: We only store what you choose to share in this browser to make the site easier to use. You can opt out and clear everything at any time.</p>
+        <ul class="list">
+          <li><strong>What we store:</strong> Volunteer form name/email (if you opt in) and your resource filters.</li>
+          <li><strong>Why:</strong> So your draft form and filters are here next time.</li>
+          <li><strong>Where:</strong> On <em>your device</em> using your browser’s localStorage. Nothing is sent to a server from this demo.</li>
+          <li><strong>How long:</strong> Form data auto-expires after 14 days; filters after 7 days.</li>
+          <li><strong>Controls:</strong> Use the checkbox in the form to turn saving on/off, and the “Clear saved data” button to delete immediately.</li>
+          <li><strong>External data:</strong> This demo doesn’t fetch external data.</li>
+        </ul>
       </div>
     </div>
   </section>
