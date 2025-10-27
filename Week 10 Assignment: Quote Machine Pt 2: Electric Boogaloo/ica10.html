@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dad Joke Generator</title>
+    <link rel="stylesheet" href="ica10.css">
+</head>
+<body>
+    <div class="app">
+        <header>Dad Joke Generator</header>
+        <section class="quotes">
+          <div class="loading" id="js-loading">Loading joke...</div>
+          <div class="quote-text" id="js-quote-text"></div>
+          <div class="joke-id" id="js-joke-id"></div>
+        </section>
+        <section class="controls">
+          <button type="button" id="js-new-quote" class="new-quote button">
+            Get New Dad Joke
+          </button>
+          <button type="button" id="js-copy" class="copy button">
+            Copy to Clipboard
+          </button>
+          <button type="button" id="js-tweet" class="twitter button">
+            Share on Twitter
+          </button>
+        </section>
+        <section class="explanation">
+          <p><strong>What I Extended:</strong> I changed the API from Christmas trivia to a dad joke generator using the icanhazdadjoke API. I added a loading indicator that shows while fetching jokes, a "Copy to Clipboard" button that lets users easily copy the joke, and a working Twitter share button. I also added a joke ID display to show which specific joke you received. The CSS has been completely redesigned with a new color scheme, gradient background, and improved styling with smooth transitions and hover effects.</p>
+          
+          <p><strong>API Use in My Critique Project:</strong> For my critique project analyzing social media's impact on mental health, I could use the Twitter API to gather real tweets about mental health topics and analyze sentiment patterns. I might also use a weather API to see if there's correlation between weather conditions and the tone of social media posts. Additionally, I could use a news API to compare social media discussions with current events coverage to see how social media amplifies or distorts news stories.</p>
+        </section>
+    </div>
+    <script src="ica10.js"></script>
+</body>
+</html>
