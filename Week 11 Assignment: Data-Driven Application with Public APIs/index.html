@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header>Weather Dashboard</header>
+        
+        <section class="privacy-controls">
+          <h3>Privacy Setting</h3>
+          <p class="privacy-info">Choose how we access your location data:</p>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="privacy" value="precise" id="precise-radio">
+              Precise Location (current location)
+            </label>
+            <label>
+              <input type="radio" name="privacy" value="city" id="city-radio" checked>
+              City-Level Only (less precise)
+            </label>
+            <label>
+              <input type="radio" name="privacy" value="manual" id="manual-radio">
+              Manual Entry (I'll type my city)
+            </label>
+          </div>
+        </section>
+
+        <section class="search-section" id="search-section">
+          <input type="text" id="city-input" placeholder="Enter city name (e.g., Boulder, CO)...">
+          <button type="button" id="search-btn" class="button search-button">Get Weather</button>
+        </section>
+
+        <section class="quotes">
+          <div class="loading" id="js-loading">Loading weather...</div>
+          <div class="weather-display" id="weather-display">
+            <h2 id="location-name"></h2>
+            <div class="temp-display" id="temp-display"></div>
+            <div class="weather-desc" id="weather-desc"></div>
+            <div class="weather-details" id="weather-details"></div>
+            <div class="data-notice" id="data-notice"></div>
+          </div>
+        </section>
+
+        <section class="controls">
+          <button type="button" id="js-new-quote" class="new-quote button">
+            Refresh Weather
+          </button>
+        </section>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
