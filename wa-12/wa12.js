@@ -206,7 +206,7 @@ function fetchWeatherByCoords(lat, lon, privacyUsed) {
         })
         .catch(function(err) {
             console.log(err);
-            alert("Failed to get weather data. The National Weather Service API only works for US locations.");
+            alert("Failed to get weather data.");
             hideLoading();
         });
 }
@@ -230,11 +230,11 @@ function displayWeather(data, lat, lon, privacyUsed) {
     
     let noticeText = "";
     if (privacyUsed === "precise") {
-        noticeText = "📍 Data sent: Your exact GPS coordinates (lat: " + lat.toFixed(4) + ", lon: " + lon.toFixed(4) + ")";
+        noticeText = "Data sent: Your exact GPS coordinates (lat: " + lat.toFixed(4) + ", lon: " + lon.toFixed(4) + ")";
     } else if (privacyUsed === "city") {
-        noticeText = "📍 Data sent: City-level coordinates only (" + lastCityName + ")";
+        noticeText = "Data sent: City-level coordinates only (" + lastCityName + ")";
     } else {
-        noticeText = "📍 Data sent: Coordinates from city you entered (" + lastCityName + ")";
+        noticeText = "Data sent: Coordinates from city you entered (" + lastCityName + ")";
     }
     
     dataNotice.textContent = noticeText;
