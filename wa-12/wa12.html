@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="wa12.css">
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>Weather Dashboard</h1>
+        </header>
+        
+        <section class="privacy-controls" aria-labelledby="privacy-heading">
+          <h2 id="privacy-heading">Privacy Setting</h2>
+          <p class="privacy-info">Choose how we access your location data:</p>
+          <div class="radio-group" role="radiogroup" aria-labelledby="privacy-heading">
+            <label>
+              <input type="radio" name="privacy" value="precise" id="precise-radio">
+              Precise Location (GPS coordinates)
+            </label>
+            <label>
+              <input type="radio" name="privacy" value="city" id="city-radio" checked>
+              City-Level Only (less precise)
+            </label>
+            <label>
+              <input type="radio" name="privacy" value="manual" id="manual-radio">
+              Manual Entry (I'll type my city)
+            </label>
+          </div>
+        </section>
+
+        <section class="search-section" id="search-section" aria-labelledby="search-heading">
+          <h2 id="search-heading" class="visually-hidden">Manual City Entry</h2>
+          <label for="city-input">Enter city name:</label>
+          <input type="text" id="city-input" placeholder="e.g., Denver, CO" aria-describedby="city-help">
+          <span id="city-help" class="visually-hidden">Enter a city name and state for weather information</span>
+          <button type="button" id="search-btn" class="button search-button">Get Weather</button>
+        </section>
+
+        <section class="quotes" aria-labelledby="weather-heading">
+          <h2 id="weather-heading" class="visually-hidden">Weather Information</h2>
+          <div class="loading" id="js-loading" role="status" aria-live="polite">Loading weather...</div>
+          <div class="weather-display" id="weather-display" role="region" aria-live="polite">
+            <h2 id="location-name"></h2>
+            <div class="temp-display" id="temp-display" aria-label="Current temperature"></div>
+            <div class="weather-desc" id="weather-desc"></div>
+            <div class="weather-details" id="weather-details"></div>
+            <div class="data-notice" id="data-notice" role="note"></div>
+          </div>
+        </section>
+
+        <section class="controls">
+          <button type="button" id="js-new-quote" class="new-quote button" aria-label="Refresh weather information">
+            Refresh Weather
+          </button>
+        </section>
+    </div>
+    <script src="wa12.js"></script>
+</body>
+</html>
