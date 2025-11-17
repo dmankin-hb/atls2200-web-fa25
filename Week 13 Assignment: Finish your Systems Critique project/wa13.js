@@ -91,9 +91,10 @@ function getCityFromCoords(lat, lon) {
         .then(function(data) {
             const city = data.address.city || data.address.town || data.address.village || "Unknown";
             const state = data.address.state || "";
-            lastCityName = city + ", " + state;
+            const cityName = city + ", " + state;
+            lastCityName = cityName;
             
-            fetchWeatherByCity(city, state);
+            fetchWeatherByCityName(cityName, lat, lon);
         })
         .catch(function(err) {
             console.log(err);
@@ -133,6 +134,10 @@ function getCoordsFromCity(cityName) {
             alert("Failed to find city. Please check the name and try again.");
             hideLoading();
         });
+}
+
+function fetchWeatherByCityName(cityName, lat, lon) {
+    fetchWeatherByCoords(lat, lon, "city");
 }
 
 function fetchWeatherByCity(city, state) {
@@ -184,7 +189,7 @@ function fetchWeatherByCoords(lat, lon, privacyUsed) {
             const city = data.properties.relativeLocation.properties.city;
             const state = data.properties.relativeLocation.properties.state;
             
-            if (privacyUsed === "city" && !lastCityName) {
+            if (!lastCityName) {
                 lastCityName = city + ", " + state;
             }
             
@@ -206,7 +211,7 @@ function fetchWeatherByCoords(lat, lon, privacyUsed) {
         })
         .catch(function(err) {
             console.log(err);
-            alert("Failed to get weather data.");
+            alert("Failed to get weather data. The National Weather Service API only works for US locations.");
             hideLoading();
         });
 }
@@ -218,6 +223,8 @@ function displayWeather(data, lat, lon, privacyUsed) {
     const weatherDesc = document.querySelector('#weather-desc');
     const weatherDetails = document.querySelector('#weather-details');
     const dataNotice = document.querySelector('#data-notice');
+    const forecastSection = document.querySelector('#forecast-section');
+    const forecastGrid = document.querySelector('#forecast-grid');
     
     const currentPeriod = data.properties.periods[0];
     
@@ -239,13 +246,48 @@ function displayWeather(data, lat, lon, privacyUsed) {
     
     dataNotice.textContent = noticeText;
     weatherDisplay.classList.add('show');
+    
+    forecastGrid.innerHTML = "";
+    
+    const daytimePeriods = data.properties.periods.filter(function(period) {
+        return period.isDaytime === true;
+    });
+    
+    const next5Days = daytimePeriods.slice(0, 5);
+    
+    next5Days.forEach(function(period) {
+        const card = document.createElement('div');
+        card.className = 'forecast-card';
+        
+        const dayName = document.createElement('div');
+        dayName.className = 'forecast-day';
+        dayName.textContent = period.name;
+        
+        const temp = document.createElement('div');
+        temp.className = 'forecast-temp';
+        temp.textContent = period.temperature + "°" + period.temperatureUnit;
+        
+        const desc = document.createElement('div');
+        desc.className = 'forecast-desc';
+        desc.textContent = period.shortForecast;
+        
+        card.appendChild(dayName);
+        card.appendChild(temp);
+        card.appendChild(desc);
+        
+        forecastGrid.appendChild(card);
+    });
+    
+    forecastSection.classList.add('show');
 }
 
 function showLoading() {
     const loading = document.querySelector('#js-loading');
     const weatherDisplay = document.querySelector('#weather-display');
+    const forecastSection = document.querySelector('#forecast-section');
     loading.classList.add('show');
     weatherDisplay.classList.remove('show');
+    forecastSection.classList.remove('show');
     refreshBtn.disabled = true;
 }
 
